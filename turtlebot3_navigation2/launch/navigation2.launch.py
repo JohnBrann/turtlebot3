@@ -28,14 +28,17 @@ TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
 
 
 def generate_launch_description():
+    pkg_robot_common_nav = get_package_share_directory('robot-common-nav')
+
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    map_dir = LaunchConfiguration(
-        'map',
-        default=os.path.join(
-            get_package_share_directory('robot-common-nav'),
-            'maps',
-            'nerve_218_nav_area.yaml')
+    # Path to maps directory
+    map_dir = os.path.join(pkg_robot_common_nav, 'maps')
+
+    # Declare the launch argument for the map name
+    map_name = DeclareLaunchArgument(
+        'map', default_value='4x4m_shapes_map.yaml', 
+        description='Map to be used in rviz for navigations'
     )
 
     param_file_name = TURTLEBOT3_MODEL + '.yaml'
@@ -54,10 +57,7 @@ def generate_launch_description():
         'nav2_default_view.rviz')
 
     return LaunchDescription([
-        DeclareLaunchArgument(
-            'map',
-            default_value=map_dir,
-            description='Full path to map file to load'),
+        map_name, 
 
         DeclareLaunchArgument(
             'params_file',
@@ -72,7 +72,7 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([nav2_launch_file_dir, '/bringup_launch.py']),
             launch_arguments={
-                'map': map_dir,
+                'map': [map_dir + '/', LaunchConfiguration('map')],
                 'use_sim_time': use_sim_time,
                 'params_file': param_dir}.items(),
         ),
