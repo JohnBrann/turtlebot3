@@ -2,11 +2,11 @@
 <launch>
     <!-- Declare launch arguments -->
     <arg name="model" default="burger" description="Specify robot model"/>
-    <arg name="use_sim_time" default="false" description="Use simulation (Gazebo) clock if true"/>
+    <arg name="use_sim_time" default="true" description="Use simulation (Gazebo) clock if true"/>
     <arg name="map" default="4x4m_shapes_map.yaml" description="Map to be used in rviz for navigations"/>
     
     <!-- Define paths -->
-    <let name="map_dir" value="$(find-pkg-share robot-common-nav)/maps"/>
+    <let name="map_dir" value="$(find-pkg-share robot_common_nav)/maps"/>
     <let name="param_dir" value="$(find-pkg-share turtlebot3_navigation2)/param/$(var model).yaml"/>
     <let name="rviz_config_dir" value="$(find-pkg-share nav2_bringup)/rviz/nav2_default_view.rviz"/>
 
@@ -18,11 +18,7 @@
     </include>
 
     <!-- Launch RViz2 -->
-    <node pkg="rviz2"
-          exec="rviz2"
-          name="rviz2"
-          output="screen">
-        <arg name="d" value="$(var rviz_config_dir)"/>
+     <node pkg="rviz2" exec="rviz2" name="rviz2" output="screen" args="-d $(var rviz_config_dir)">
         <param name="use_sim_time" value="$(var use_sim_time)"/>
     </node>
 
